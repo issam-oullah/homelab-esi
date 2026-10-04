@@ -16,7 +16,11 @@ VMware Workstation sandbox — Windows Server 2019 AD (lab.local), pfSense gatew
 ## 🎯 Objectif du projet
 
 Mettre en place, **de zéro**, une infrastructure complète et fonctionnelle dans des
-machines virtuelles (VMware Workstation), sur le modèle d'un petit réseau d'entreprise :
+machines virtuelles (VMware Workstation), sur le modèle d'un vrai SI d'entreprise,
+en 8 paliers progressifs : socle réseau, services Windows/Linux, cybersécurité,
+supervision des journaux, SIEM, sauvegarde/restauration, automatisation et IA.
+
+Le squelette actuel du laboratoire :
 
 - un **contrôleur de domaine** avec identifiants unifiés (AD + DNS),
 - une **passerelle pare-feu** protégeant le réseau interne,
@@ -49,7 +53,7 @@ résolution DNS, supervision), comme dans un vrai SI.
 
 ## 🌐 Plan réseau
 
-- **Réseau interne (lab)** : `192.168.183.0/24` — vmnet1 (host-onlyg), passerelle `192.168.183.2`
+- **Réseau interne (lab)** : `192.168.183.0/24` — vmnet1 (host-only), passerelle `192.168.183.2`
 - **Accès externe** : vmnet8 (NAT) `192.168.29.x` — WAN du pare-feu pfSense
 - **DNS** : DC01 (`192.168.183.10`) — domaine `lab.local`
 
@@ -72,14 +76,57 @@ résolution DNS, supervision), comme dans un vrai SI.
 - **Supervision** : agents Zabbix installés sur **DC01** et **SRV01**, hôtes
   créés, disponibilité **verte** (mesures collectées en continu).
 
-## 🧭 Prochaines étapes
+## 🧭 Plan du projet — 8 paliers
 
-- [ ] Résoudre l'authentification AD sur MON01 (SSSD — problème d'encryption kerberos)
-- [ ] Authentification Zabbix via le domaine AD (comptes `issam`, `alae`)
-- [ ] Serveur de messagerie dans le domaine (objectif principal du laboratoire)
-- [ ] Fichier `/etc/hosts` / reverse DNS cohérents
-- [ ] Sauvegardes & état stable des machines (snapshot)
-- [ ] Documentation des incidents rencontrés (journal technique)
+> Feuille de route globale du laboratoire. Chaque palier est indépendant et
+> s'appuie sur l'infrastructure des paliers précédents.
+
+### Palier 1 — Socle réseau
+- [x] Interconnexion VMware Workstation (réseau lab vmnet1 + NAT vmnet8)
+- [x] Déploiement de pfSense (passerelle / pare-feu)
+- [ ] EVE-NG (émulation réseau avancée)
+- [ ] VLAN + routage inter-VLAN
+- [ ] Valider connectivité et segmentation réseau
+
+### Palier 2 — Services Windows et Linux
+- [x] Active Directory + DNS (`lab.local`, DC01)
+- [ ] DHCP
+- [ ] GPO (début : désactivation complexité) — étendre les configurations
+- [x] Premiers serveurs Linux (SRV01)
+- [x] Intégration machines à l'annuaire (SRV01, MON01)
+- [ ] Applications des configurations de base (durcissement)
+
+### Palier 3 — Cybersécurité et détection
+- [ ] pfSense + Suricata/Snort
+- [ ] Kali Linux pour tests d'intrusion contrôlés
+- [ ] Scénarios d'attaque et vérification de la détection
+
+### Palier 4 — Supervision et centralisation des journaux
+- [x] Zabbix (agents + hôtes + alertes de base)
+- [ ] PRTG
+- [ ] Grafana
+- [ ] ELK (centralisation et analyse des journaux)
+- [ ] Alertes et tableaux de bord avancés
+
+### Palier 5 — SIEM et détection avancée
+- [ ] QRadar
+- [ ] Connecter les sources d'événements
+- [ ] Corrélation des événements et scénarios de sécurité contrôlés
+
+### Palier 6 — Sauvegarde et restauration
+- [ ] BCK01 et politique de sauvegarde
+- [ ] Sauvegardes quotidiennes / hebdomadaires / mensuelles
+- [ ] Tests de restauration et métriques RTO / RPO
+
+### Palier 7 — Automatisation
+- [ ] Automatisation administration Linux (Ansible)
+- [ ] Automatisation tâches Windows (PowerShell / WinRM)
+- [ ] Scripts Python et bibliothèque de scripts / playbooks réutilisables
+
+### Palier 8 — Intelligence artificielle
+- [ ] Agent IA (Ollama, FastAPI, LangChain)
+- [ ] Connexion de l'agent aux outils (Ansible, PowerShell)
+- [ ] Validation + journalisation avant toute action de l'agent
 
 ## 🔐 Sécurité
 
